@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Document</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+</head>
+<body>
+	<!-- 主界面菜单同时移动 -->
+		<!-- 侧滑导航根容器 -->
+		<div class="mui-off-canvas-wrap mui-scalable mui-slide-in">
+			<!-- 主页面容器 -->
+			<div class="mui-inner-wrap">
+				<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-left" id="offCanvasSide">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<!-- 菜单具体展示内容 -->							
+							<header class="mui-bar mui-bar-nav blue" >
+								<span class="mui-icon mui-icon-contact"></span>
+								<span class="mui-off-canvas-wrap">请登录</span>
+							</header>
+							<ul class="mui-table-view">
+								<li class="mui-table-view-cell">
+									<a class="mui-navigate-wrap">00000</a>
+								</li>
+								<li class="mui-table-view-cell">
+									<span class="mui-icon mui-icon-star"></span>
+									<span class="mui-off-canvas-wrap"><a>我的收藏</a></span>
+								</li>
+								<li class="mui-table-view-cell">
+									<span class="mui-icon mui-icon-download"></span>
+									<span class="mui-off-canvas-wrap"><a>离线下载</a></span>			
+								</li>
+								<li class="mui-table-view-cell">
+									<span class="mui-icon mui-icon-chatboxes"></span>
+									<span class="mui-off-canvas-wrap"><a>我的评论</a></span>		
+								</li>								
+							</ul>
+						</div>
+					</div>
+				</aside>
+				<!-- 主页面标题 -->
+				<header class="mui-bar mui-bar-nav">
+					<a class="mui-icon mui-action-menu mui-icon-bars mui-pull-left" href="#offCanvasSide"></a>
+					<h1 class="mui-title">知乎日报</h1>
+				</header>
+				<nav class="mui-bar mui-bar-tab">
+					<a class="mui-tab-item mui-active">
+						<span class="mui-icon mui-icon-home"></span>
+						<span class="mui-tab-label">首页</span>
+					</a>
+					<a class="mui-tab-item">
+						<span class="mui-icon mui-icon-phone"></span>
+						<span class="mui-tab-label">电话</span>
+					</a>
+					<a class="mui-tab-item">
+						<span class="mui-icon mui-icon-email"></span>
+						<span class="mui-tab-label">邮件</span>
+					</a>
+					<a class="mui-tab-item">
+						<span class="mui-icon mui-icon-gear"></span>
+						<span class="mui-tab-label">设置</span>
+					</a>
+				</nav>
+				<!-- 主页面内容容器 -->
+				<div class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<!-- 主界面具体展示内容 -->					
+						<div id="slider" class="mui-slider">
+							<div class="mui-slider-group mui-slider-loop" id="details">
+
+							</div>
+							<div class="mui-slider-indicator" id="dian">
+
+							</div>
+						  </div><br />
+								 <p>今日新闻</p>
+								 <div id="lists">								 
+									 
+								 </div> 
+					</div>
+				</div>
+		   	<div class="mui-off-canvas-backdrop"></div>
+			</div>
+		</div>
+<script src="js/mui.js" charset="utf-8"></script>
+<script type="text/javascript">		
+	  mui.init();
+		//开启滑动
+		mui('.mui-scroll-wrapper').scroll({
+			deceleration: 0.0005
+		})		
+		mui.ajax('https://news-at.zhihu.com/api/4/news/latest',{				
+			type:'GET',//HTTP请求类型
+			dataType:'json',//服务器返回json格式数据		
+			timeout:10000,//超时时间设置为10秒；
+			headers:{'Content-Type':'application/json'},	              
+			success:function(data){	
+									//轮播
+									var img = "<div class='mui-slider-item mui-slider-item-duplicate'>";
+									img += "<a href='" + data.top_stories[0].id + "'>";
+									img += "<img width='400' height='300' title='" + data.top_stories[0].title + "'";
+									img += "src='" + data.top_stories[0].image + "'>";
+									img += "</a><div class='labels' ><strong>" + data.top_stories[0].title + "</strong></div> ";
+									img += "</div>";
+									
+									//轮播点
+									var	li = '<ul class="mui-table-view">';
+										var str = '<div class="mui-indicator mui-active"></div>';
+											//新闻列表						
+											for (var i = 0; i < data.top_stories.length; i++) {
+												img += "<div class='mui-slider-item'>";
+												img += "<a href='" + data.top_stories[i].id + "'>";
+												img += "<img width='400' height='300' title='" + data.top_stories[i].title + "' ";
+												img += "src='" + data.top_stories[i].image + "' >";
+												img += "</a><div class='labels'><strong>" + data.top_stories[i].title + "</strong></div>";
+												img += "</div>";
+												if (i < data.top_stories.length - 1) {
+													str += '<div class="mui-indicator"></div>';
+												}
+											}						
+											document.getElementById("dian").innerHTML = str;
+											
+											img += "<div class='mui-slider-item mui-slider-item-duplicate'>";
+											img += "<a href='" + data.top_stories[0].id + "'>";
+											img += "<img width='400' height='300' title='" + data.top_stories[0].title + "'";
+											img += "src='" + data.top_stories[0].image + "'>";
+											img += " </a><div class='labels'><strong>" + data.top_stories[0].title + "</strong></div>";						
+											
+											document.getElementById("details").innerHTML = img;
+											var gallery = mui('.mui-slider');
+											gallery.slider({
+												interval: 2000
+											});		
+																		
+											list = " ";
+											list += "<div class='mui-card' style='margin-bottom: 5px;'>";
+											list += "<ul class='mui-table-view'>";
+											
+											for (var i = 0; i < data.stories.length; i++) {
+												list += "<li class='mui-table-view-cell mui-media'>";
+												list += "<a href='" + data.stories[i].id + "'>";
+												list += "<img class='mui-media-object mui-pull-left' src='" + data.stories[i].images + "'>";
+												list += "<div class='mui-media-body'>";
+												list += "<p class='mui-ellipsis'>" + data.stories[i].title + "</p>";
+												list += "</div>";
+												list += "</a><li>";
+											}	
+											list+="</ul>";
+											list+="</div>";
+											
+											document.getElementById("lists").innerHTML = list;
+					},									
+			error:function(xhr,type,errorThrown){
+				console.log( type );
+			}	
+		});	
+	</script>
+</body>
+</html>
